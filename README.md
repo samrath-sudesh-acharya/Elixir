@@ -2,7 +2,7 @@
 
 ## Clone the code to your local machine
 ```
-git clone 
+git clone git@github.com:samrath-sudesh-acharya/Tork-App.git
 ```
 ## Make a new branch
 ```
