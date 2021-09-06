@@ -1,3 +1,6 @@
 # Elixir
 
-![elixir](https://user-images.githubusercontent.com/76547134/132237514-3a044366-e8ca-441d-9243-0de97397b6e5.png)
+
+<img align="right" src="https://user-images.githubusercontent.com/76547134/132238900-b1c1bd0a-efb1-4258-8e49-f2ec8ce5099f.png"/>
+
+
