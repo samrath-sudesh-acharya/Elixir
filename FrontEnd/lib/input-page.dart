@@ -1,17 +1,48 @@
+import 'dart:convert';
+
+import 'package:elixir_app/exchange.dart';
+import 'package:elixir_app/models/appointment.dart';
+import 'package:elixir_app/output-page.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-void main(List<String> args) {
-  runApp(new App());
-}
-
-class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+// ignore: camel_case_types
+class inputPage extends StatefulWidget {
+  const inputPage({Key? key}) : super(key: key);
 
   @override
-  _AppState createState() => _AppState();
+  _inputPageState createState() => _inputPageState();
 }
 
-class _AppState extends State<App> {
+Future<PatientInfo?> collectInfo(String disease, String disorder, int patientId,
+    String syndrome, String info) async {
+  final String apiUrl = 'http://10.0.2.2:8000/appointment';
+  final msg = jsonEncode({
+    "disease": disease,
+    "syndrome": syndrome,
+    "disorder": disorder,
+    "info": info,
+    "patient_id": patientId
+  });
+  final response = await http
+      .post(Uri.parse(apiUrl),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json-patch+json',
+          },
+          body: msg)
+      .then((response) => print(response.body))
+      .catchError((error) => print(error));
+}
+
+// ignore: camel_case_types
+class _inputPageState extends State<inputPage> {
+  late Help v;
+  late PatientInfo _info;
+  final disease = TextEditingController();
+  final syndrome = TextEditingController();
+  final disorder = TextEditingController();
+  final info = TextEditingController();
   String ptext = '';
   String ttext = '';
 
@@ -21,6 +52,13 @@ class _AppState extends State<App> {
     // TODO: implement initState
     ttext = 'Submit';
     super.initState();
+  }
+
+  void help(String a, String b, String c, String d) {
+    v.disease = a;
+    v.disorder = b;
+    v.syndrome = c;
+    v.info = d;
   }
 
   void method1() {
@@ -58,6 +96,7 @@ class _AppState extends State<App> {
                 child: Container(
                   child: TextField(
                     autocorrect: true,
+                    controller: disease,
                     decoration: InputDecoration(
                       labelText: 'What are your symptoms?',
                       labelStyle: TextStyle(color: Colors.grey),
@@ -82,8 +121,9 @@ class _AppState extends State<App> {
                 child: Container(
                     child: TextField(
                   autocorrect: true,
+                  controller: syndrome,
                   decoration: InputDecoration(
-                    labelText: 'Where do you feel the pain?',
+                    labelText: 'Syndrome?',
                     labelStyle: TextStyle(color: Colors.grey),
                     filled: true,
                     fillColor: Colors.white70,
@@ -105,8 +145,33 @@ class _AppState extends State<App> {
                 child: Container(
                     child: TextField(
                   autocorrect: true,
+                  controller: disorder,
                   decoration: InputDecoration(
-                    labelText: 'When did it start?',
+                    labelText: 'Disorder?',
+                    labelStyle: TextStyle(color: Colors.grey),
+                    filled: true,
+                    fillColor: Colors.white70,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      borderSide:
+                          BorderSide(color: Color(0xFFB40284A), width: 2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Color(0xFFB40284A)),
+                    ),
+                  ),
+                )),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 310),
+                child: Container(
+                    child: TextField(
+                  autocorrect: true,
+                  controller: info,
+                  decoration: InputDecoration(
+                    labelText: 'Additional Information',
                     labelStyle: TextStyle(color: Colors.grey),
                     filled: true,
                     fillColor: Colors.white70,
@@ -123,7 +188,7 @@ class _AppState extends State<App> {
                 )),
               ),
               Positioned(
-                  top: 370,
+                  top: 400,
                   width: 200,
                   left: 95,
                   height: 50,
@@ -132,8 +197,18 @@ class _AppState extends State<App> {
                         primary: Color(0xFFB40284A), // background
                         onPrimary: Colors.white, // foreground
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         method1();
+                        final PatientInfo? patient = await collectInfo(
+                            disease.text,
+                            disorder.text,
+                            1,
+                            syndrome.text,
+                            info.text);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => appointmentpage()));
                       },
                       child: Text(ttext))),
             ],
