@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'package:substring_highlight/substring_highlight.dart';
 import 'package:elixir_app/exchange.dart';
 import 'package:elixir_app/models/appointment.dart';
 import 'package:elixir_app/output-page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 // ignore: camel_case_types
@@ -37,6 +38,17 @@ Future<PatientInfo?> collectInfo(String disease, String disorder, int patientId,
 
 // ignore: camel_case_types
 class _inputPageState extends State<inputPage> {
+  late List<String> autoCompleteData;
+  Future fetchAutoCompleteData() async {
+    final String stringData =
+        await rootBundle.loadString("assets/symptoms.json");
+    final List<dynamic> json = jsonDecode(stringData);
+    final List<String> jsonStringdata = json.cast<String>();
+    setState(() {
+      autoCompleteData = jsonStringdata;
+    });
+  }
+
   late Help v;
   late PatientInfo _info;
   final disease = TextEditingController();
@@ -52,13 +64,7 @@ class _inputPageState extends State<inputPage> {
     // TODO: implement initState
     ttext = 'Submit';
     super.initState();
-  }
-
-  void help(String a, String b, String c, String d) {
-    v.disease = a;
-    v.disorder = b;
-    v.syndrome = c;
-    v.info = d;
+    fetchAutoCompleteData();
   }
 
   void method1() {
@@ -93,26 +99,63 @@ class _inputPageState extends State<inputPage> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 100),
-                child: Container(
-                  child: TextField(
-                    autocorrect: true,
-                    controller: disease,
-                    decoration: InputDecoration(
-                      labelText: 'What are your symptoms?',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: Colors.white70,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        borderSide:
-                            BorderSide(color: Color(0xFFB40284A), width: 2),
+                child: Autocomplete(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text.isEmpty) {
+                      return const Iterable<String>.empty();
+                    } else {
+                      return autoCompleteData.where((word) => word
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase()));
+                    }
+                  },
+                  optionsViewBuilder:
+                      (context, Function(String) onSeletected, options) {
+                    return Material(
+                      elevation: 4,
+                      child: ListView.separated(
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context, index) {
+                          final option = options.elementAt(index);
+                          return ListTile(
+                            title: SubstringHighlight(
+                              text: option.toString(),
+                              term: disease.text,
+                              textStyleHighlight:
+                                  TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                            onTap: onSeletected(option.toString()),
+                          );
+                        },
+                        separatorBuilder: (context, index) => Divider(),
+                        itemCount: options.length,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Color(0xFFB40284A)),
+                    );
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController fieldTextEditingController,
+                      FocusNode fieldFocusNode,
+                      VoidCallback onFieldSubmitted) {
+                    return TextField(
+                      autocorrect: true,
+                      controller: disease,
+                      decoration: InputDecoration(
+                        labelText: 'What are your symptoms?',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white70,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                          borderSide:
+                              BorderSide(color: Color(0xFFB40284A), width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Color(0xFFB40284A)),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
               Padding(
@@ -208,7 +251,11 @@ class _inputPageState extends State<inputPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => appointmentpage()));
+                                builder: (context) => appointmentpage(
+                                    disease.text,
+                                    disorder.text,
+                                    syndrome.text,
+                                    info.text)));
                       },
                       child: Text(ttext))),
             ],

@@ -381,6 +381,7 @@ class _loginpageState extends State<loginpage> {
 // ignore: camel_case_types
 class _inputwith extends StatefulWidget {
   final IconData icon;
+
   String hint;
   TextEditingController value;
   _inputwith({required this.icon, required this.hint, required this.value});
@@ -390,6 +391,7 @@ class _inputwith extends StatefulWidget {
 
 // ignore: camel_case_types
 class __inputwithState extends State<_inputwith> {
+  bool isHiddenPassword = true;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -412,17 +414,31 @@ class __inputwithState extends State<_inputwith> {
           ),
           Expanded(
             child: TextField(
+              obscureText:
+                  (widget.icon == Icons.password) ? isHiddenPassword : false,
               controller: widget.value,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 20),
-                hintText: widget.hint,
-                border: InputBorder.none,
-              ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 20),
+                  hintText: widget.hint,
+                  border: InputBorder.none,
+                  suffixIcon: (widget.icon == Icons.password)
+                      ? InkWell(
+                          onTap: _togglepassword,
+                          child: isHiddenPassword
+                              ? Icon(Icons.visibility)
+                              : Icon(Icons.visibility_off))
+                      : null),
             ),
           )
         ],
       ),
     );
+  }
+
+  void _togglepassword() {
+    setState(() {
+      isHiddenPassword = !isHiddenPassword;
+    });
   }
 }
 

@@ -4,17 +4,20 @@ import 'package:elixir_app/exchange.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
+// ignore: must_be_immutable
 class appointmentpage extends StatefulWidget {
-  const appointmentpage({Key? key}) : super(key: key);
-
+  late String disease, disorder, syndrome, info;
+  appointmentpage(this.disease, this.disorder, this.syndrome, this.info);
   @override
-  _appointmentpageState createState() => _appointmentpageState();
+  _appointmentpageState createState() => _appointmentpageState(
+      this.disease, this.disorder, this.syndrome, this.info);
 }
 
 // ignore: camel_case_types
 class _appointmentpageState extends State<appointmentpage>
     with TickerProviderStateMixin {
-  help() => help();
+  late String disease, disorder, syndrome, info;
+  _appointmentpageState(this.disease, this.disorder, this.syndrome, this.info);
   late AnimationController controller;
   @override
   void initState() {
@@ -48,61 +51,79 @@ class _appointmentpageState extends State<appointmentpage>
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               )),
             ),
-            SingleChildScrollView(
-              child: Container(
-                width: 20,
-                decoration: new BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+            Container(
+              height: 400,
+              width: double.infinity,
+              decoration: new BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Text("Syndrome",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
-                    Text("{disease}",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
                     SizedBox(
-                      height: 30,
+                      height: 20,
                     ),
-                    Text("Symptoms",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
-                    Text("{syndrome}",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
-                    SizedBox(
-                      height: 30,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child: Text(
+                          "\t\tSymptoms\n\t\t$disease",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                          ),
+                        ),
+                      ),
                     ),
-                    Text("Disorder",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
-                    Text("{disorder}",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
                     SizedBox(
-                      height: 30,
+                      height: 20,
                     ),
-                    Text("Additional Information",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
-                    Text("{info}",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold)),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child: Text(
+                          "\t\tDisorder\n\t\t$disorder",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(
-                      height: 30,
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child: Text(
+                          "\t\tSyndrome\n\t\t$syndrome",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child: Text(
+                          "\t\tAdditional Information\n\t\t$info",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
